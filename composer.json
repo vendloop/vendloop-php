@@ -1,0 +1,43 @@
+{
+    "name": "vendloop/vendloop-php",
+    "type": "library",
+    "description": "A PHP library for communicating with the Vendloop REST API.",
+    "keywords": [
+        "vendloop",
+        "vendloop-api",
+        "vendloop-sdk",
+        "vendloop-php"
+    ],
+    "homepage": "https://github.com/vendloop/vendloop-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ogar George",
+            "email": "geoorg30@gmail.com",
+            "homepage": "https://github.com/geoorg30",
+            "role": "Developer"
+        }
+    ],
+	"require": {
+		"php": ">=5.6.0",
+		"ext-curl": "*",
+		"ext-json": "*",
+		"ext-mbstring": "*"
+	},
+    "require-dev": {
+        "phpunit/phpunit": "^5.7 || ^9.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "squizlabs/php_codesniffer": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vendloop\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
