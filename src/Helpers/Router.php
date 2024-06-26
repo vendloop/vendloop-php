@@ -56,7 +56,7 @@ class Router
                 $caller = new Caller($config);
                 return $caller->callEndpoint($interface, $params, $sentargs);
             };
-            $this->methods[$method] = \Closure::bind($mtdFunc, $this, get_class());
+            $this->methods[$method] = \Closure::bind($mtdFunc, $this, self::class);
         }
     }
 
