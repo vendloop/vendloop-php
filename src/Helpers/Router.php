@@ -20,6 +20,7 @@ class Router
     const POST_METHOD = 'post';
     const PUT_METHOD = 'put';
     const GET_METHOD = 'get';
+    const DELETE_METHOD = 'delete';
 
     public function __call($method, $args)
     {

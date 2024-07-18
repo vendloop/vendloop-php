@@ -73,9 +73,9 @@ class VendloopClient
     {
         // api_key
         if (!array_key_exists('api_key', $config)) {
-            $msg = 'No API key provided.  (HINT: set your API key using '
-              . '"Vendloop::setApiKey(<API-KEY>)".  You can generate API keys from '
-              . 'the Vendloop web interface.  See https://vendloop.com/docs/api for '
+            $msg = 'No API key provided.'
+              . 'You can generate API keys from '
+              . 'the Vendloop web interface. See https://vendloop.com/docs/api for '
               . 'details, or email support@vendloop.com if you have any questions.';
 
             throw new VendloopException($msg);

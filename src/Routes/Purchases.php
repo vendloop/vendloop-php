@@ -32,7 +32,7 @@ class Purchases
                 'supplier_id',
                 'product_id',
                 'variant_id',
-                'employee_id',
+                'user_id',
                 'start_date',
                 'end_date',
             ],

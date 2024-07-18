@@ -32,9 +32,39 @@ class Sales
                 'customer_id',
                 'product_id',
                 'variant_id',
-                'employee_id',
+                'user_id',
                 'start_date',
                 'end_date',
+            ],
+        ];
+    }
+
+    public static function add()
+    {
+        return [
+            Router::METHOD_KEY => Router::POST_METHOD,
+            Router::ENDPOINT_KEY => self::root(),
+			Router::PARAMS_KEY => [
+				'customer_id',
+				'user_id',
+				'status',
+				'items',
+				'payments',
+				'reference',
+				'date',
+				'discount',
+				'discount_type',
+				'tax_id',
+				'note',
+			],
+            Router::REQUIRED_KEY => [
+                Router::PARAMS_KEY => [
+                    'customer_id',
+                    'user_id',
+                    'status',
+                    'items',
+                    'payments',
+                ],
             ],
         ];
     }
