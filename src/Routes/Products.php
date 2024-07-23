@@ -27,6 +27,14 @@ class Products
         return [
             Router::METHOD_KEY => Router::GET_METHOD,
             Router::ENDPOINT_KEY => self::root(),
+            Router::PARAMS_KEY => [
+                'sku',
+                'name',
+                'category_id',
+                'brand_id',
+                'unit_id',
+                'hidden',
+            ],
         ];
     }
 
