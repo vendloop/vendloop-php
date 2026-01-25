@@ -3,12 +3,13 @@
 namespace Vendloop\HttpClient;
 
 use \Vendloop\Exception\ApiException;
-use \Vendloop\Exception\VendloopException;
 
 class Response
 {
     public $okay;
-    public $body;
+ //   public $body;
+    public $body = '{}';
+    public $forApi;
     public $messages = [];
 
     private $requestObject;
@@ -34,7 +35,6 @@ class Response
                 $this->requestObject
             );
         }
-
         return $resp;
     }
 
@@ -61,15 +61,19 @@ class Response
 
     private function implodedMessages()
     {
-        return explode("\n\n", $this->messages);
+		return implode("\n\n", $this->messages);
     }
 
     public function wrapUp()
     {
         if ($this->okay) {
             return $this->parseResponse();
-        } else {
-			throw new VendloopException($this->implodedMessages());
+        }
+        if (!$this->okay) {
+            throw new \Exception($this->implodedMessages());
+        }
+        if ($this->okay) {
+            return $this->body;
         }
         error_log($this->implodedMessages());
         return false;

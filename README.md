@@ -76,7 +76,7 @@ The `VendloopClient` class also accepts an array of config values
 $vendloop = new \Vendloop\VendloopClient([
     'api_key' => 'sk_live_aa873dabc21fba4d45f0b18b56d79a18e37762bb', // your api key
     'base_url' => 'https://api.vendloop.com', // to change the endpoint URL to a mock server
-    'use_guzzle' => false // if true, use guzzle for API calls (guzzle should be installed)
+    'use_guzzlehttp' => false // if true, use GuzzleHttp for API calls (GuzzleHttp should be installed)
 ]);
 ```
 Check [SAMPLES](SAMPLES.md) for more sample API usage

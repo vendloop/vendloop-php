@@ -11,6 +11,7 @@ class VendloopClient
     public $version = "1.0.0";
     public $config;
     private $defaultOpts;
+    public static $fallback_to_file_get_contents = true;
 
     public function __construct($config = [])
     {
@@ -59,7 +60,7 @@ class VendloopClient
     {
         return [
             'api_key' => null,
-            'use_guzzle' => false,
+            'use_guzzlehttp' => false,
             'base_url' => $this->base_url,
         ];
     }
@@ -77,7 +78,6 @@ class VendloopClient
               . 'You can generate API keys from '
               . 'the Vendloop web interface. See https://vendloop.com/docs/api for '
               . 'details, or email support@vendloop.com if you have any questions.';
-
             throw new VendloopException($msg);
         }
 		
@@ -98,9 +98,9 @@ class VendloopClient
             throw new VendloopException('base_url must be a string');
         }
 		
-        // use_guzzle
-        if (null !== $config['use_guzzle'] && !\is_bool($config['use_guzzle'])) {
-            throw new VendloopException('use_guzzle must be null or a boolean');
+        // use_guzzlehttp
+        if (null !== $config['use_guzzlehttp'] && !\is_bool($config['use_guzzlehttp'])) {
+            throw new VendloopException('use_guzzlehttp must be null or a boolean');
         }
 		
         // check absence of extra keys
@@ -111,5 +111,15 @@ class VendloopClient
 
             throw new VendloopException('Found unknown key(s) in configuration array: ' . $invalidKeys);
         }
+    }
+
+    public static function disableFileGetContentsFallback()
+    {
+        VendloopClient::$fallback_to_file_get_contents = false;
+    }
+
+    public static function enableFileGetContentsFallback()
+    {
+        VendloopClient::$fallback_to_file_get_contents = true;
     }
 }

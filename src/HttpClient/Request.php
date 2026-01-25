@@ -3,6 +3,7 @@
 namespace Vendloop\HttpClient;
 
 use \Vendloop\Helpers\Router;
+use \Vendloop\VendloopClient;
 
 class Request
 {
@@ -18,6 +19,10 @@ class Request
         $this->response = new Response();
         $this->response->setRequestObject($this);
         $this->config = $config;
+        $this->response->forApi = !is_null($config);
+        if ($this->response->forApi) {
+            $this->headers['Content-Type'] = 'application/json';
+        }
     }
 
     public function getResponse()
@@ -36,17 +41,31 @@ class Request
 
     public function send()
     {
-		if ($this->config->use_guzzle) {
+		if ($this->config->use_guzzlehttp) {
 			$this->withGuzzle();
 		} else {
 			$this->withCurl();
 		}
+        if (!$this->response->okay) {
+            $this->withFileGetContents();
+        }
         return $this->response;
     }
 
     public function withGuzzle()
     {
-        if (class_exists('\\GuzzleHttp\\Client') && class_exists('\\GuzzleHttp\\Psr7\\Request')) {
+        if (isset($this->config) && !$this->config->use_guzzlehttp) {
+            $this->response->okay = false;
+            return;
+        }
+        if (class_exists('\\GuzzleHttp\\Exception\\BadResponseException')
+            && class_exists('\\GuzzleHttp\\Exception\\ClientException')
+            && class_exists('\\GuzzleHttp\\Exception\\ConnectException')
+            && class_exists('\\GuzzleHttp\\Exception\\RequestException')
+            && class_exists('\\GuzzleHttp\\Exception\\ServerException')
+            && class_exists('\\GuzzleHttp\\Client')
+            && class_exists('\\GuzzleHttp\\Psr7\\Request')
+        ) {
             $request = new \GuzzleHttp\Psr7\Request(
                 strtoupper($this->method),
                 $this->endpoint,
@@ -65,16 +84,43 @@ class Request
                     || $e instanceof \GuzzleHttp\Exception\RequestException
                     || $e instanceof \GuzzleHttp\Exception\ServerException)
                 ) {
-                    if ($e->hasResponse()) {
-                        $this->response->body = $e->getResponse()->getBody()->getContents();
-                    }
+					$message = 'GuzzleHttp failed';
                     $this->response->okay = true;
+                    if ($e->hasResponse()) {
+						$message = $e->getMessage();
+                        $this->response->body = $e->getResponse()->getBody()->getContents();
+                    } else {
+						$this->response->body = $message;
+					}
                 }
-                $this->response->messages[] = $e->getMessage();
+                $this->response->messages[] = $message;
             }
         } else {
-            $this->response->messages[] = 'GuzzleHttp not installed';
+            $this->response->messages[] = 'GuzzleHttp is not installed';
 		}
+    }
+
+    public function withFileGetContents()
+    {
+        if (!VendloopClient::$fallback_to_file_get_contents) {
+            return;
+        }
+        $context = stream_context_create(
+            [
+                'http' => [
+                  'method'=>$this->method,
+                  'header'=>$this->flattenedHeaders(),
+                  'content'=>$this->body,
+                  'ignore_errors' => true
+                ]
+            ]
+        );
+        $this->response->body = file_get_contents($this->endpoint, false, $context);
+        if ($this->response->body === false) {
+            $this->response->messages[] = 'file_get_contents failed with response: \'' . error_get_last() . '\'.';
+        } else {
+            $this->response->okay = true;
+        }
     }
 
     public function withCurl()
